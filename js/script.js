@@ -1,8 +1,11 @@
+//DOOM
 const highlight = document.querySelector('.highlight');
 const navItems = document.querySelectorAll('.navigation li');
 const navLinks = document.querySelectorAll('.navigation a');
 const sections = document.querySelectorAll('.section');
+const toggle = document.getElementById("toggle-dark");
 
+//Event
 function setHighlight(el) {
   highlight.style.height = el.offsetHeight + 'px';
   highlight.style.left = el.offsetLeft + 'px';
@@ -84,3 +87,12 @@ document.addEventListener("DOMContentLoaded", function() {
     slides[idx].classList.add('active');
   }, 3500);
 });
+
+if (toggle) {
+  toggle.textContent = document.body.classList.contains("dark-mode") ? "🌞 Modo Claro" : "🌙 Modo Escuro";
+
+  toggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
+    toggle.textContent = document.body.classList.contains("dark-mode") ? "🌞 Modo Claro" : "🌙 Modo Escuro";
+  });
+}
