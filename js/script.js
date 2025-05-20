@@ -12,22 +12,6 @@ function setHighlight(el) {
   highlight.style.top = el.offsetTop + 'px';
 }
 
-function loadTwitchPlayer() {
-    const embed = document.getElementById('twitch-embed');
-    embed.innerHTML = ""; // Limpa o container antes de criar o player
-    const script = document.createElement('script');
-    script.src = "https://player.twitch.tv/js/embed/v1.js";
-    script.onload = function() {
-        new Twitch.Player("twitch-embed", {
-            video: "2459683679", // ou use channel: "ybaianoo"
-            width: 800,
-            height: 500,
-            parent: ["localhost"]
-        });
-    };
-    document.body.appendChild(script);
-}
-
 function activateSection(id, li) {
   navItems.forEach(item => item.classList.remove('active'));
   sections.forEach(sec => sec.classList.remove('active'));
@@ -35,15 +19,6 @@ function activateSection(id, li) {
   li.classList.add('active');
   document.getElementById(id).classList.add('active');
   setHighlight(li);
-
-  // Deixa a aba serviços muda até ser acionada
-  if (id === "servicos") {
-    loadTwitchPlayer();
-  } else {
-    // Limpa o player ao sair da aba serviços
-    const embed = document.getElementById('twitch-embed');
-    if (embed) embed.innerHTML = "";
-  }
 
   const titles = {
     home: 'Home',
@@ -61,7 +36,16 @@ navLinks.forEach(link => {
   link.addEventListener('click', function(e) {
     e.preventDefault();
     const id = this.getAttribute('href').replace('#', '');
-    activateSection(id, this.parentElement);
+    // Remove active de todas as seções
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    // Adiciona active só na seção clicada
+    const section = document.getElementById(id);
+    if (section) section.classList.add('active');
+    // Atualiza o menu ativo
+    navItems.forEach(item => item.classList.remove('active'));
+    this.parentElement.classList.add('active');
+    // Atualiza a posição da fumaça
+    setHighlight(this.parentElement);
   });
 });
 
@@ -95,4 +79,55 @@ if (toggle) {
     document.body.classList.toggle("dark-mode");
     toggle.textContent = document.body.classList.contains("dark-mode") ? "🌞 Modo Claro" : "🌙 Modo Escuro";
   });
+}
+const albumImages = [
+  'Files/album/mundoEspaco.jpg',
+  'Files/album/mundoNumeros.jpg',
+  'Files/album/mundoPalavra.jpg',
+  'Files/album/mundoTempo.jpg',
+  'Files/album/mundoVida.jpg',
+  'Files/album/tematicaMundos.jpg'
+];
+let albumIndex = 0;
+const albumImg = document.getElementById('album-img');
+if (albumImg) {
+  albumImg.style.opacity = 1;
+  setInterval(() => {
+    // Evita erro se o elemento for removido da DOM
+    if (!albumImg) return;
+    albumImg.style.transition = "opacity 0.5s";
+    albumImg.style.opacity = 0;
+    setTimeout(() => {
+      albumIndex = (albumIndex + 1) % albumImages.length;
+      albumImg.src = albumImages[albumIndex];
+      albumImg.style.opacity = 1;
+    }, 500);
+  }, 4000);
+}
+const logoLink = document.getElementById('logo-link');
+if (logoLink) {
+  logoLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    // Remove active de todas as seções
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    // Ativa a seção home
+    const homeSection = document.getElementById('home');
+    if (homeSection) homeSection.classList.add('active');
+    // Atualiza o menu ativo
+    navItems.forEach(item => item.classList.remove('active'));
+    const homeNav = document.querySelector('.navigation li a[href="#home"]');
+    if (homeNav && homeNav.parentElement) {
+      homeNav.parentElement.classList.add('active');
+      setHighlight(homeNav.parentElement);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+function preencherMailto() {
+  const nome = document.getElementById('nome').value;
+  const email = document.getElementById('email').value;
+  const mensagem = document.getElementById('mensagem').value;
+  const mailto = `mailto:projetoconcentra@gmail.com?subject=Contato%20via%20site%20Concentra&body=Nome:%20${encodeURIComponent(nome)}%0AEmail:%20${encodeURIComponent(email)}%0AMensagem:%20${encodeURIComponent(mensagem)}`;
+  window.location.href = mailto;
 }
